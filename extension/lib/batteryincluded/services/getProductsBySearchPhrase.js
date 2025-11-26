@@ -1,6 +1,6 @@
-const BatteryIncludedClient = require('../client/BatteryIncludedClient');
-const prepareSort = require('../utils/prepareSort');
-const prepareFilters = require('../utils/prepareFilters');
+const BatteryIncludedClient = require('../client/BatteryIncludedClient')
+const prepareSort = require('../utils/prepareSort')
+const prepareFilters = require('../utils/prepareFilters')
 
 /**
  * Validates whether a value represents a well-formed dot-notation path.
@@ -8,11 +8,11 @@ const prepareFilters = require('../utils/prepareFilters');
  * @param {unknown} path - Value to validate.
  * @returns {boolean} True if the value is a valid dot-notation path; otherwise false.
  */
-function isValidPathSyntax(path) {
-  if (typeof path !== 'string') return false;
-  const p = path.trim();
-  if (p.length === 0 || p.startsWith('.') || p.endsWith('.')) return false;
-  return p.split('.').every(seg => seg.trim() !== '' && seg === seg.trim());
+function isValidPathSyntax (path) {
+  if (typeof path !== 'string') return false
+  const p = path.trim()
+  if (p.length === 0 || p.startsWith('.') || p.endsWith('.')) return false
+  return p.split('.').every(seg => seg.trim() !== '' && seg === seg.trim())
 }
 
 /**
@@ -22,12 +22,12 @@ function isValidPathSyntax(path) {
  * @param {string} path - Dot-notation path describing the property chain.
  * @returns {unknown} The resolved value, or `undefined` if the path cannot be followed.
  */
-function getByPath(obj, path) {
-  if (typeof path !== 'string' || path.trim() === '') return undefined;
+function getByPath (obj, path) {
+  if (typeof path !== 'string' || path.trim() === '') return undefined
   return path.trim().split('.').reduce(
     (acc, key) => (acc == null ? undefined : acc[key]),
     obj
-  );
+  )
 }
 
 /**
@@ -40,25 +40,25 @@ function getByPath(obj, path) {
  * @returns {Promise<{ productIds: string[], totalProductCount: number }>}
  */
 module.exports = async (context, input) => {
-  const client = new BatteryIncludedClient(context);
+  const client = new BatteryIncludedClient(context)
   const {
     searchPhrase,
     filters,
     sort,
     offset = 0,
-    limit = 20,
-  } = input;
-  const { locale, productIdentifier } = context.config;
+    limit = 20
+  } = input
+  const { locale, productIdentifier } = context.config
 
   const identifierPath =
-    typeof productIdentifier === 'string' ? productIdentifier.trim() : '';
+    typeof productIdentifier === 'string' ? productIdentifier.trim() : ''
 
   if (!isValidPathSyntax(identifierPath)) {
-    context.log.warn(`[BatteryIncluded] Invalid identifier path "${identifierPath}".`);
+    context.log.warn(`[BatteryIncluded] Invalid identifier path "${identifierPath}".`)
     return {
       productIds: [],
-      totalProductCount: 0,
-    };
+      totalProductCount: 0
+    }
   }
 
   const query = {
@@ -68,32 +68,32 @@ module.exports = async (context, input) => {
     per_page: limit > 0 ? limit : 20,
     v: { locale },
     sort: prepareSort(sort),
-    ...prepareFilters(filters),
-  };
+    ...prepareFilters(filters)
+  }
 
-  const result = await client.call('/browse', query);
-  const hits = Array.isArray(result.hits) ? result.hits : [];
+  const result = await client.call('/browse', query)
+  const hits = Array.isArray(result.hits) ? result.hits : []
 
   if (hits.length === 0) {
     return {
       productIds: [],
-      totalProductCount: result.found || 0,
-    };
+      totalProductCount: result.found || 0
+    }
   }
 
   const ids = hits
-    .map(hit => getByPath(hit?.document, identifierPath))
-    .filter(id => id !== undefined && id !== null);
+    .map(hit => getByPath(hit && hit.document, identifierPath))
+    .filter(id => id !== undefined && id !== null)
 
   if (ids.length === 0) {
     // Hits found, but identifier path not found in any document
     context.log.warn(
       `[BatteryIncluded] Identifier path "${identifierPath}" not found in any of the result documents.`
-    );
+    )
   }
 
   return {
     productIds: ids,
-    totalProductCount: result.found || 0,
-  };
-};
+    totalProductCount: result.found || 0
+  }
+}

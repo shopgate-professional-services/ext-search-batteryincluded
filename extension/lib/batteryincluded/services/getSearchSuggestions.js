@@ -1,4 +1,4 @@
-const BatteryIncludedClient = require('../client/BatteryIncludedClient');
+const BatteryIncludedClient = require('../client/BatteryIncludedClient')
 
 /**
  * BatteryIncluded: Search Suggestions
@@ -10,15 +10,15 @@ const BatteryIncludedClient = require('../client/BatteryIncludedClient');
  * @returns {Promise<{ suggestions: string[] }>}
  */
 module.exports = async (context, input) => {
-  const client = new BatteryIncludedClient(context);
-  const { searchPhrase } = input;
-  const { locale } = context.config;
+  const client = new BatteryIncludedClient(context)
+  const { searchPhrase } = input
+  const { locale } = context.config
 
   const query = {
     q: searchPhrase,
-    v: { locale },
-  };
-  const result = await client.call('/suggest', query);
+    v: { locale }
+  }
+  const result = await client.call('/suggest', query)
 
   return {
     suggestions: Array.isArray(result)
@@ -27,6 +27,6 @@ module.exports = async (context, input) => {
         .flatMap(item => item.hits || [])
         .map(hit => hit.value)
         .filter(Boolean)
-      : [],
-  };
-};
+      : []
+  }
+}
