@@ -1,7 +1,5 @@
 const axios = require('axios')
 
-const BI_BASE_URL = 'https://api.batteryincluded.io'
-
 /**
  * Client for interacting with the BatteryIncluded API.
  */
@@ -12,7 +10,6 @@ class BatteryIncludedClient {
    * @param {string} options.config.publicApiKey - Public API key for authentication.
    * @param {string} options.config.baseUrl - Base API URL.
    * @param {string} options.config.collection - Collection identifier.
-   * @param {string} options.config.productIdentifier - Product identifier.
    * @param {Object} [options.log] - Logger object.
    *
    * @throws {Error} If any required config field is missing.
@@ -21,12 +18,11 @@ class BatteryIncludedClient {
     const {
       publicApiKey,
       baseUrl,
-      collection,
-      productIdentifier
+      collection
     } = config
 
-    if (!publicApiKey || !baseUrl || !collection || !productIdentifier) {
-      throw new Error('[BatteryIncluded] publicApiKey, baseUrl, collection and productIdentifier are required')
+    if (!publicApiKey || !baseUrl || !collection) {
+      throw new Error('BatteryIncluded: Missing required configuration (publicApiKey, baseUrl, collection)')
     }
 
     this.apiKey = publicApiKey
@@ -35,7 +31,7 @@ class BatteryIncludedClient {
     this.log = log
 
     this.http = axios.create({
-      baseURL: baseUrl || BI_BASE_URL,
+      baseURL: baseUrl,
       headers: {
         'X-BI-API-KEY': this.apiKey,
         'Content-Type': 'application/x-ndjson'
@@ -54,27 +50,23 @@ class BatteryIncludedClient {
     const url = `/api/v1/collections/${this.collection}/documents${path}`
 
     try {
-      this.log.debug(`[BatteryIncluded] Calling ${url} with query: ${JSON.stringify(query)}`)
+      this.log.debug({ url, query }, 'BatteryIncluded: Request start')
       const response = await this.http.get(url, { params: query })
       return response.data
     } catch (err) {
-      const { response, message } = err
-      const status = response ? response.status : null
-      const statusText = response ? response.statusText : null
-      const data = response ? response.data : null
-
-      this.log.error('[BatteryIncluded] Request failed', {
-        url,
-        status,
-        statusText,
-        message,
-        data
-      })
-
-      throw new Error(
-        `[BatteryIncluded] API error (${status || 'unknown'}): ${message || 'Unexpected error'}`,
-        { cause: err }
+      const res = err.response
+      this.log.error(
+        {
+          url,
+          statusCode: res ? res.status : null,
+          statusText: res ? res.statusText : null,
+          errorMessage: err.message || null,
+          code: err.code || null
+        },
+        'BatteryIncluded: Request failed'
       )
+
+      throw new Error('BatteryIncluded: Request failed', { cause: err })
     }
   }
 }

@@ -25,11 +25,9 @@ module.exports = async (context, input) => {
     q: searchPhrase,
     v: { locale },
     page: 1,
-    // eslint-disable-next-line camelcase
     per_page: 1
   })
 
-  // eslint-disable-next-line camelcase
   if (!result || !result.facet_counts || !result.facet_counts.length) {
     return { filters: [] }
   }

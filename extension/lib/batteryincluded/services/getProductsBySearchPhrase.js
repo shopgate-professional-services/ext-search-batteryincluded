@@ -54,7 +54,7 @@ module.exports = async (context, input) => {
     typeof productIdentifier === 'string' ? productIdentifier.trim() : ''
 
   if (!isValidPathSyntax(identifierPath)) {
-    context.log.warn(`[BatteryIncluded] Invalid identifier path "${identifierPath}".`)
+    context.log.warn(`BatteryIncluded: Invalid identifier path "${identifierPath}".`)
     return {
       productIds: [],
       totalProductCount: 0
@@ -64,7 +64,6 @@ module.exports = async (context, input) => {
   const query = {
     q: searchPhrase,
     page: offset && limit > 0 ? Math.floor(offset / limit) + 1 : 1,
-    // eslint-disable-next-line camelcase
     per_page: limit > 0 ? limit : 20,
     v: { locale },
     sort: prepareSort(sort),
@@ -88,7 +87,7 @@ module.exports = async (context, input) => {
   if (ids.length === 0) {
     // Hits found, but identifier path not found in any document
     context.log.warn(
-      `[BatteryIncluded] Identifier path "${identifierPath}" not found in any of the result documents.`
+      `BatteryIncluded: Identifier path "${identifierPath}" not found in any of the result documents.`
     )
   }
 
