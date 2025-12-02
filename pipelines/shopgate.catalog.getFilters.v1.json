@@ -140,7 +140,7 @@
         "else": {
           "type": "extension",
           "id": "@shopgate-project/search-batteryincluded",
-          "path": "@shopgate-project/search-batteryincluded/lib/batteryincluded/services/getFilters.js",
+          "path": "@shopgate-project/search-batteryincluded/steps/getFilters.js",
           "input": [
             {
               "key": "searchPhrase",

@@ -116,7 +116,7 @@
       },
       {
         "id": "@shopgate-project/search-batteryincluded",
-        "path": "@shopgate-project/search-batteryincluded/lib/batteryincluded/services/getProductsBySearchPhrase.js",
+        "path": "@shopgate-project/search-batteryincluded/steps/getProductsBySearchPhrase.js",
         "type": "extension",
         "input": [
           {

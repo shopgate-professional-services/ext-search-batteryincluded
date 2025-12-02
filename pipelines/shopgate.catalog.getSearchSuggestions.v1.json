@@ -11,7 +11,7 @@
     "steps": [
       {
         "id": "@shopgate-project/search-batteryincluded",
-        "path": "@shopgate-project/search-batteryincluded/lib/batteryincluded/services/getSearchSuggestions.js",
+        "path": "@shopgate-project/search-batteryincluded/steps/getSearchSuggestions.js",
         "type": "extension",
         "input": [
           {

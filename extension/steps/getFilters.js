@@ -1,4 +1,4 @@
-const BatteryIncludedClient = require('../client/BatteryIncludedClient')
+const BatteryIncludedClient = require('../lib/batteryincluded/client/BatteryIncludedClient')
 
 /**
  * Transforms BatteryIncluded `facet_counts` into normalized filter objects.

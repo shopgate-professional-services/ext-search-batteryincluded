@@ -1,4 +1,4 @@
-const BatteryIncludedClient = require('../client/BatteryIncludedClient')
+const BatteryIncludedClient = require('../lib/batteryincluded/client/BatteryIncludedClient')
 
 /**
  * BatteryIncluded: Search Suggestions

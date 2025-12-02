@@ -1,6 +1,6 @@
-const BatteryIncludedClient = require('../client/BatteryIncludedClient')
-const prepareSort = require('../utils/prepareSort')
-const prepareFilters = require('../utils/prepareFilters')
+const BatteryIncludedClient = require('../lib/batteryincluded/client/BatteryIncludedClient')
+const prepareSort = require('../lib/batteryincluded/utils/prepareSort')
+const prepareFilters = require('../lib/batteryincluded/utils/prepareFilters')
 
 /**
  * Validates whether a value represents a well-formed dot-notation path.
