@@ -54,7 +54,7 @@ module.exports = async (context, input) => {
     typeof productIdentifier === 'string' ? productIdentifier.trim() : ''
 
   if (!isValidPathSyntax(identifierPath)) {
-    context.log.warn(`BatteryIncluded: Invalid identifier path "${identifierPath}".`)
+    context.log.warn({ identifierPath }, 'BatteryIncluded: invalid identifier path')
     return {
       productIds: [],
       totalProductCount: 0
@@ -86,9 +86,7 @@ module.exports = async (context, input) => {
 
   if (ids.length === 0) {
     // Hits found, but identifier path not found in any document
-    context.log.warn(
-      `BatteryIncluded: Identifier path "${identifierPath}" not found in any of the result documents.`
-    )
+    context.log.warn({ identifierPath }, 'BatteryIncluded: identifier path not found in result documents')
   }
 
   return {

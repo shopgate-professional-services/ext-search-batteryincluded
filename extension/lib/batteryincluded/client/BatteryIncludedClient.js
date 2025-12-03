@@ -22,7 +22,7 @@ class BatteryIncludedClient {
     } = config
 
     if (!publicApiKey || !baseUrl || !collection) {
-      throw new Error('BatteryIncluded: Missing required configuration (publicApiKey, baseUrl, collection)')
+      throw new Error('BatteryIncluded: internal configuration error')
     }
 
     this.apiKey = publicApiKey
@@ -50,7 +50,7 @@ class BatteryIncludedClient {
     const url = `/api/v1/collections/${this.collection}/documents${path}`
 
     try {
-      this.log.debug({ url, queryKeys: Object.keys(query) }, 'BatteryIncluded: Request start')
+      this.log.debug({ url, queryKeys: Object.keys(query) }, 'BatteryIncluded: request start')
       const response = await this.http.get(url, { params: query })
       return response.data
     } catch (err) {
@@ -63,10 +63,10 @@ class BatteryIncludedClient {
           errorMessage: err.message || null,
           code: err.code || null
         },
-        'BatteryIncluded: Request failed'
+        'BatteryIncluded: request failed'
       )
 
-      throw new Error('BatteryIncluded: Request failed', { cause: err })
+      throw new Error('BatteryIncluded: request failed', { cause: err })
     }
   }
 }
