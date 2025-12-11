@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.3",
   "id": "@shopgate-project/search-batteryincluded",
   "components": [
   ],
@@ -56,6 +56,24 @@
       "params": {
         "label": "Filter facets (fields & labels)",
         "type": "json"
+      }
+    },
+    "catalogService": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "CATALOG_SERVICE_PRODUCTS",
+      "params": {
+        "type": "select",
+        "label": "Catalog Service",
+        "required": true,
+        "options": {
+          "multiple": false,
+          "options": [
+            { "label": "Shopify Catalog Service", "value": "CATALOG_SERVICE_SHOPIFY" },
+            { "label": "Products Service", "value": "CATALOG_SERVICE_PRODUCTS" },
+            { "label": "Generic Catalog Service",  "value": "CATALOG_SERVICE_GENERIC" }
+          ]
+        }
       }
     }
   }

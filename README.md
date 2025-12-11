@@ -14,6 +14,9 @@ Documentation reference: <https://www.postman.com/batteryincluded/core/overview>
 | `productIdentifier` | Dot-notation path pointing to the unique product ID inside the search response payload. Must be a valid dot-notation expression.     | **Yes**       | `_product.id`                    |
 | `locale`            | Locale code used to query localized attributes (e.g. `de`, `de-DE`). Must match a locale configured in your BatteryIncluded project. | **Yes**  | —                                |
 | `filterFacets`      | List of allowed filter definitions. Each entry must contain a `fieldName`, optionally a `label`. When the array is empty(`[]`), all available facets from BatteryIncluded will be exposed.                                    | No       | `[]`                             |
+| `catalogService`      | Defines which catalog backend is used.                                    | **Yes**       | `CATALOG_SERVICE_PRODUCTS`                             |
+
+
 
 ### 📌 filterFacets details
 
@@ -43,6 +46,14 @@ Must match a locale configured in your BatteryIncluded backend.
 
 Example: `de` or `de-DE`
 
+### 🗄️ Supported Catalog Services
+
+The extension can resolve product data through different catalog services:
+
+* `CATALOG_SERVICE_PRODUCTS` – Shopgate Products Service
+* `CATALOG_SERVICE_GENERIC` – Shopgate Catalog Service
+* `CATALOG_SERVICE_SHOPIFY` – Shopify Sync Service
+
 ### Add a configuration object similar to the following:
 
 ```json
@@ -52,6 +63,7 @@ Example: `de` or `de-DE`
   "publicApiKey": "DeMoKeyK1tsfkpse9u9834hfhdhfKF7s",
   "productIdentifier": "_product.id",
   "locale": "de-DE",
+  "catalogService": "CATALOG_SERVICE_PRODUCTS",
   "filterFacets": [
     {
       "fieldName": "_product_i18n.attributes.Hersteller",
