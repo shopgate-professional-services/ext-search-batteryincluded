@@ -14,7 +14,10 @@ module.exports = async (context, input) => {
   const { searchPhrase } = input
   const { locale, filterFacets = [] } = context.config
 
-  const allowedFacetNames = filterFacets.map(f => f.fieldName)
+  const allowedFacetNames = filterFacets
+    .map(f => f.fieldName)
+    .filter((n) => { return typeof n === 'string' && n.trim() !== '' })
+
   const labelMap = Object.fromEntries(
     filterFacets
       .filter(f => typeof f.fieldName === 'string' && typeof f.label === 'string')
@@ -73,6 +76,11 @@ module.exports = async (context, input) => {
         values
       }
     })
+
+  // sort filters
+  if (allowedFacetNames.length > 0) {
+    filters.sort((a, b) => allowedFacetNames.indexOf(a.id) - allowedFacetNames.indexOf(b.id))
+  }
 
   return { filters }
 }

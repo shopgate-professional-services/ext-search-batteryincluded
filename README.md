@@ -25,9 +25,11 @@ Each facet entry follows:
 ```json
 {
   "fieldName": "_product_i18n.attributes.brand",
-  "label": "Brand"
+  "label": "Hersteller"
 }
 ```
+
+You can find the `fieldName` at "Filters" in the BatteryIncluded backend. For example: `_product_i18n ❯ (locale) ❯ attributes ❯ brand`
 
 ### 🧾 Product Identifier Rules
 
@@ -42,7 +44,7 @@ _customMapping.product_uuid
 
 ### 🌐 Locale Requirements
 
-Must match a locale configured in your BatteryIncluded backend.
+Must match a locale configured in the BatteryIncluded backend.
 
 Example: `de` or `de-DE`
 

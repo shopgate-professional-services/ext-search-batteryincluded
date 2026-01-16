@@ -50,7 +50,10 @@ class BatteryIncludedClient {
     const url = `/api/v1/collections/${this.collection}/documents${path}`
 
     try {
-      this.log.debug({ url, queryKeys: Object.keys(query) }, 'BatteryIncluded: request start')
+      this.log.debug({
+        url,
+        queryKeys: Object.keys(query)
+      }, 'BatteryIncluded: request start')
       const response = await this.http.get(url, { params: query })
       return response.data
     } catch (err) {
