@@ -1,5 +1,5 @@
 /**
- * @param {PipelineContext} context
+ * @param {PipelineContext} context - Contains config
  * @returns {{ catalogService: string }} The configured catalog service identifier.
  */
 module.exports = async (context) => {
