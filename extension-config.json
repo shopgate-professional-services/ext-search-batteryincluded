@@ -1,0 +1,80 @@
+{
+  "version": "1.0.0",
+  "id": "@shopgate-project/search-batteryincluded",
+  "components": [
+  ],
+  "configuration": {
+    "baseUrl": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "https://api.batteryincluded.io",
+      "params": {
+        "label": "BatteryIncluded API endpoint",
+        "type": "text"
+      }
+    },
+    "collection": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "",
+      "params": {
+        "label": "Collection name (from BatteryIncluded)",
+        "type": "text"
+      }
+    },
+    "publicApiKey": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "",
+      "params": {
+        "label": "Public API key (BatteryIncluded)",
+        "type": "text"
+      }
+    },
+    "productIdentifier": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "_product.id",
+      "params": {
+        "label": "Product ID field (dot-notation)",
+        "type": "text"
+      }
+    },
+    "locale": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "",
+      "params": {
+        "label": "Locale (e.g. de, de-DE)",
+        "type": "text"
+      }
+    },
+    "filterFacets": {
+      "type": "admin",
+      "destination": "backend",
+      "default": [],
+      "params": {
+        "label": "Filter facets (fields & labels)",
+        "type": "json"
+      }
+    },
+    "catalogService": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "CATALOG_SERVICE_PRODUCTS",
+      "params": {
+        "type": "select",
+        "label": "Catalog Service",
+        "required": true,
+        "options": {
+          "multiple": false,
+          "options": [
+            { "label": "Shopify Catalog Service", "value": "CATALOG_SERVICE_SHOPIFY" },
+            { "label": "Products Service", "value": "CATALOG_SERVICE_PRODUCTS" },
+            { "label": "Generic Catalog Service",  "value": "CATALOG_SERVICE_GENERIC" }
+          ]
+        }
+      }
+    }
+  }
+}
