@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0] - 2026-06-12
+### Changed
+- Removed the `CATALOG_SERVICE_SHOPIFY` catalog service option.
+
 ## [1.0.1] - 2026-06-01
 ### Changed
 - Updated `CATALOG_SERVICE_GENERIC` filter pipeline integration to align with `@shopgate/catalog` 2.1.0 search-pipeline refactoring.

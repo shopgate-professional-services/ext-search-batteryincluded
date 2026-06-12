@@ -165,34 +165,6 @@
             { "id": "1000", "key": "filters" }
           ]
         }
-      },
-      {
-        "type": "conditional",
-        "input": [
-          { "id": "1", "key": "categoryId", "optional": true },
-          { "id": "5", "key": "catalogService" }
-        ],
-        "expression": {
-          "all": [
-            { "ok": [{ "name": "categoryId" }] },
-            { "eq": [
-                { "name": "catalogService", "type": "input" },
-                { "type": "static", "value": "CATALOG_SERVICE_SHOPIFY" }
-              ]
-            }
-          ]
-        },
-        "then": {
-          "type": "extension",
-          "id": "@shopgate/catalog-shopify",
-          "path": "@shopgate/catalog-shopify/filters/getFiltersFromCatalogService.js",
-          "input": [
-            { "id": "1", "key": "categoryId", "optional": true },
-            { "id": "2", "key": "searchPhrase", "optional": true },
-            { "id": "3", "key": "filters", "optional": true }
-          ],
-          "output":[{ "id": "1000", "key": "filters" }]
-        }
       }
     ]
   }
