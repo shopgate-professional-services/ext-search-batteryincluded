@@ -53,13 +53,51 @@
         "then": {
           "type": "extension",
           "id": "@shopgate/catalog",
-          "path": "@shopgate/catalog/filters/getFilters.js",
+          "path": "@shopgate/catalog/filters/getFiltersQueryForBigApi.js",
           "input": [
             { "id": "1", "key": "categoryId", "optional": true },
-            { "id": "2", "key": "searchPhrase",  "optional": true },
+            { "id": "2", "key": "searchPhrase", "optional": true },
             { "id": "3", "key": "filters",  "optional": true  }
           ],
-          "output": [{ "id": "1000", "key": "filters" }]
+          "output": [
+            { "id": "10", "key": "service"},
+            { "id": "11", "key": "version" },
+            { "id": "12", "key": "path" },
+            { "id": "13", "key": "method" },
+            { "id": "14", "key": "query" }
+          ]
+        }
+      },
+      {
+        "type": "conditional",
+        "input": [
+          { "id": "1", "key": "categoryId", "optional": true },
+          { "id": "5", "key": "catalogService" }
+        ],
+        "expression": {
+          "all": [
+            { "ok": [{ "name": "categoryId" }] },
+            { "eq": [
+                { "name": "catalogService", "type": "input" },
+                { "type": "static", "value": "CATALOG_SERVICE_GENERIC" }
+              ]
+            }
+          ]
+        },
+        "then": {
+          "id": "@shopgate/bigapi",
+          "path": "@shopgate/bigapi/big-api/getBigApiResult.js",
+          "type": "extension",
+          "input": [
+            { "id": "10", "key": "service" },
+            { "id": "11", "key": "version" },
+            { "id": "12", "key": "path" },
+            { "id": "13", "key": "method" },
+            { "id": "14", "key": "query" }
+          ],
+          "output": [
+            { "id": "1000", "key": "filters" }
+          ]
         }
       },
       {
@@ -126,34 +164,6 @@
           "output": [
             { "id": "1000", "key": "filters" }
           ]
-        }
-      },
-      {
-        "type": "conditional",
-        "input": [
-          { "id": "1", "key": "categoryId", "optional": true },
-          { "id": "5", "key": "catalogService" }
-        ],
-        "expression": {
-          "all": [
-            { "ok": [{ "name": "categoryId" }] },
-            { "eq": [
-                { "name": "catalogService", "type": "input" },
-                { "type": "static", "value": "CATALOG_SERVICE_SHOPIFY" }
-              ]
-            }
-          ]
-        },
-        "then": {
-          "type": "extension",
-          "id": "@shopgate/catalog-shopify",
-          "path": "@shopgate/catalog-shopify/filters/getFiltersFromCatalogService.js",
-          "input": [
-            { "id": "1", "key": "categoryId", "optional": true },
-            { "id": "2", "key": "searchPhrase", "optional": true },
-            { "id": "3", "key": "filters", "optional": true }
-          ],
-          "output":[{ "id": "1000", "key": "filters" }]
         }
       }
     ]

@@ -54,7 +54,6 @@ The extension can resolve product data through different catalog services:
 
 * `CATALOG_SERVICE_PRODUCTS` – Shopgate Products Service
 * `CATALOG_SERVICE_GENERIC` – Shopgate Catalog Service
-* `CATALOG_SERVICE_SHOPIFY` – Shopify Sync Service
 
 ### Add a configuration object similar to the following:
 

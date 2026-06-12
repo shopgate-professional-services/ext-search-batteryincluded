@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "id": "@shopgate-project/search-batteryincluded",
   "components": [
   ],
@@ -69,7 +69,6 @@
         "options": {
           "multiple": false,
           "options": [
-            { "label": "Shopify Catalog Service", "value": "CATALOG_SERVICE_SHOPIFY" },
             { "label": "Products Service", "value": "CATALOG_SERVICE_PRODUCTS" },
             { "label": "Generic Catalog Service",  "value": "CATALOG_SERVICE_GENERIC" }
           ]
