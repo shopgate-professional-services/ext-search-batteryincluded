@@ -1,5 +1,7 @@
 const axios = require('axios')
 
+const DEFAULT_TIMEOUT_MS = 6500
+
 /**
  * Client for interacting with the BatteryIncluded API.
  */
@@ -11,10 +13,12 @@ class BatteryIncludedClient {
    * @param {string} options.config.baseUrl - Base API URL.
    * @param {string} options.config.collection - Collection identifier.
    * @param {Object} [options.log] - Logger object.
+   * @param {Object} [requestOptions]
+   * @param {number} [requestOptions.timeout] - Request timeout in ms.
    *
    * @throws {Error} If any required config field is missing.
    */
-  constructor ({ config, log }) {
+  constructor ({ config, log }, { timeout = DEFAULT_TIMEOUT_MS } = {}) {
     const {
       publicApiKey,
       baseUrl,
@@ -36,7 +40,7 @@ class BatteryIncludedClient {
         'X-BI-API-KEY': this.apiKey,
         'Content-Type': 'application/x-ndjson'
       },
-      timeout: 8000
+      timeout
     })
   }
 

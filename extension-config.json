@@ -1,7 +1,26 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "id": "@shopgate-project/search-batteryincluded",
   "components": [
+  ],
+  "steps": [
+    {
+      "path": "extension/steps/routeCategoryToBi.js",
+      "description": "Routes category listings to the BatteryIncluded search pipelines",
+      "hooks": ["shopgate.catalog.getProducts.v1:before"],
+      "input": [
+        { "key": "categoryId", "optional": true },
+        { "key": "searchPhrase", "optional": true },
+        { "key": "filters", "optional": true },
+        { "key": "productIds", "optional": true },
+        { "key": "offset", "optional": true }
+      ],
+      "output": [
+        { "key": "categoryId", "optional": true },
+        { "key": "searchPhrase", "optional": true },
+        { "key": "filters", "optional": true }
+      ]
+    }
   ],
   "configuration": {
     "baseUrl": {
@@ -71,6 +90,38 @@
           "options": [
             { "label": "Products Service", "value": "CATALOG_SERVICE_PRODUCTS" },
             { "label": "Generic Catalog Service",  "value": "CATALOG_SERVICE_GENERIC" }
+          ]
+        }
+      }
+    },
+    "categoryListingEnabled": {
+      "type": "admin",
+      "destination": "backend",
+      "default": false,
+      "params": {
+        "type": "checkbox",
+        "label": "Use BatteryIncluded for category product listings"
+      }
+    },
+    "categoryFilterField": {
+      "type": "admin",
+      "destination": "backend",
+      "default": "name",
+      "params": {
+        "type": "select",
+        "label": "Category filter field (BatteryIncluded)",
+        "required": true,
+        "options": {
+          "multiple": false,
+          "options": [
+            {
+              "label": "Category path (merchandising rules apply)",
+              "value": "name"
+            },
+            {
+              "label": "Category id (no merchandising rules)",
+              "value": "id"
+            }
           ]
         }
       }

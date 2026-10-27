@@ -1,34 +1,8 @@
 const BatteryIncludedClient = require('../lib/batteryincluded/client/BatteryIncludedClient')
 const prepareSort = require('../lib/batteryincluded/utils/prepareSort')
 const prepareFilters = require('../lib/batteryincluded/utils/prepareFilters')
-
-/**
- * Validates whether a value represents a well-formed dot-notation path.
- *
- * @param {unknown} path - Value to validate.
- * @returns {boolean} True if the value is a valid dot-notation path; otherwise false.
- */
-function isValidPathSyntax (path) {
-  if (typeof path !== 'string') return false
-  const p = path.trim()
-  if (p.length === 0 || p.startsWith('.') || p.endsWith('.')) return false
-  return p.split('.').every(seg => seg.trim() !== '' && seg === seg.trim())
-}
-
-/**
- * Resolves a nested value from an object using a dot-notation path.
- *
- * @param {unknown} obj - Root value to traverse.
- * @param {string} path - Dot-notation path describing the property chain.
- * @returns {unknown} The resolved value, or `undefined` if the path cannot be followed.
- */
-function getByPath (obj, path) {
-  if (typeof path !== 'string' || path.trim() === '') return undefined
-  return path.trim().split('.').reduce(
-    (acc, key) => (acc == null ? undefined : acc[key]),
-    obj
-  )
-}
+const fetchHits = require('../lib/batteryincluded/utils/fetchHits')
+const { isValidPathSyntax, extractProductIds } = require('../lib/batteryincluded/utils/productIds')
 
 /**
  * BatteryIncluded: Product Search
@@ -45,8 +19,8 @@ module.exports = async (context, input) => {
     searchPhrase,
     filters,
     sort,
-    offset = 0,
-    limit = 20
+    offset,
+    limit
   } = input
   const { locale, productIdentifier } = context.config
 
@@ -63,34 +37,30 @@ module.exports = async (context, input) => {
 
   const query = {
     q: searchPhrase,
-    page: offset && limit > 0 ? Math.floor(offset / limit) + 1 : 1,
-    per_page: limit > 0 ? limit : 20,
     v: { locale },
     sort: prepareSort(sort),
     ...prepareFilters(filters)
   }
 
-  const result = await client.call('/browse', query)
-  const hits = Array.isArray(result.hits) ? result.hits : []
+  const { hits, found, extensions } = await fetchHits(client, query, { offset, limit })
 
-  if (hits.length === 0) {
-    return {
-      productIds: [],
-      totalProductCount: result.found || 0
-    }
+  const overrides = extensions.filter(extension => extension && extension.type === 'overrides')
+  if (overrides.length) {
+    context.log.debug({
+      searchPhrase,
+      filters,
+      rules: overrides.map(extension => extension.data && extension.data.name)
+    }, 'BatteryIncluded: merchandising rules applied')
   }
 
-  const ids = hits
-    .map(hit => getByPath(hit && hit.document, identifierPath))
-    .filter(id => id !== undefined && id !== null)
+  const productIds = extractProductIds(hits, identifierPath)
 
-  if (ids.length === 0) {
-    // Hits found, but identifier path not found in any document
+  if (hits.length > 0 && productIds.length === 0) {
     context.log.warn({ identifierPath }, 'BatteryIncluded: identifier path not found in result documents')
   }
 
   return {
-    productIds: ids,
-    totalProductCount: result.found || 0
+    productIds,
+    totalProductCount: found
   }
 }
