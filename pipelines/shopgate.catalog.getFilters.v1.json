@@ -11,6 +11,21 @@
     "output": [{ "key": "filters", "id": "1000" }],
     "steps": [
       {
+        "type": "extension",
+        "id": "@shopgate-project/search-batteryincluded",
+        "path": "@shopgate-project/search-batteryincluded/steps/routeCategoryToBi.js",
+        "input": [
+          { "id": "1", "key": "categoryId", "optional": true },
+          { "id": "2", "key": "searchPhrase", "optional": true },
+          { "id": "3", "key": "filters", "optional": true }
+        ],
+        "output": [
+          { "id": "1", "key": "categoryId", "optional": true },
+          { "id": "2", "key": "searchPhrase", "optional": true },
+          { "id": "3", "key": "filters", "optional": true }
+        ]
+      },
+      {
         "type": "conditional",
         "input": [
           { "id": "1", "key": "categoryId", "optional": true }

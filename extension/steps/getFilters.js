@@ -1,4 +1,8 @@
 const BatteryIncludedClient = require('../lib/batteryincluded/client/BatteryIncludedClient')
+const prepareFilters = require('../lib/batteryincluded/utils/prepareFilters')
+const CATEGORY_FILTER_FIELDS = require('../lib/batteryincluded/category/categoryFilterFields')
+
+const CATEGORY_FIELD_NAMES = Object.values(CATEGORY_FILTER_FIELDS)
 
 /**
  * Transforms BatteryIncluded `facet_counts` into normalized filter objects.
@@ -6,12 +10,13 @@ const BatteryIncludedClient = require('../lib/batteryincluded/client/BatteryIncl
  * @param {PipelineContext} context - Execution context containing config and locale.
  * @param {Object} input - Input parameters for the pipeline step.
  * @param {string} input.searchPhrase - Search term used for the browse request.
+ * @param {Object} [input.filters] - Only the category filter is applied, other filters are ignored.
  *
  * @returns {Promise<{ filters: Array }>} Resolves with a list of normalized filter objects.
  */
 module.exports = async (context, input) => {
   const client = new BatteryIncludedClient(context)
-  const { searchPhrase } = input
+  const { searchPhrase, filters: requestFilters } = input
   const { locale, filterFacets = [] } = context.config
 
   const allowedFacetNames = filterFacets
@@ -24,11 +29,17 @@ module.exports = async (context, input) => {
       .map(f => [f.fieldName, f.label.trim()])
   )
 
+  const categoryFilters = Object.fromEntries(
+    Object.entries(requestFilters || {}).filter(([fieldName]) => CATEGORY_FIELD_NAMES.includes(fieldName))
+  )
+  const isCategoryListing = Object.keys(categoryFilters).length > 0
+
   const result = await client.call('/browse', {
     q: searchPhrase,
     v: { locale },
     page: 1,
-    per_page: 1
+    per_page: 1,
+    ...prepareFilters(categoryFilters)
   })
 
   if (!result || !result.facet_counts || !result.facet_counts.length) {
@@ -39,6 +50,7 @@ module.exports = async (context, input) => {
     .filter(facet => (
       !allowedFacetNames.length || allowedFacetNames.includes(facet.field_name)
     ))
+    .filter(facet => !isCategoryListing || !CATEGORY_FIELD_NAMES.includes(facet.field_name))
     .map((facet) => {
       const rawLabel = labelMap[facet.field_name]
       const label = (typeof rawLabel === 'string' && rawLabel.trim() !== '')
@@ -63,7 +75,7 @@ module.exports = async (context, input) => {
           .filter(c => c.count > 0)
           .map(c => ({
             id: c.value,
-            label: `${c.value} (${c.count})`,
+            label: c.value,
             hits: c.count
           }))
         : []

@@ -1,6 +1,6 @@
-# BatteryIncluded Search Integration
+# BatteryIncluded
 
-This extension replaces the default Shopgate search implementation with **[BatteryIncluded](https://batteryincluded.ai/en/)** as a uniform search and filter provider.
+This extension replaces the default Shopgate search implementation with **[BatteryIncluded](https://batteryincluded.ai/en/)** as a uniform search and filter provider. Optionally, category product listings come from BatteryIncluded as well, so its merchandising rules apply in the app.
 
 Documentation reference: <https://www.postman.com/batteryincluded/core/overview>
 
@@ -15,6 +15,8 @@ Documentation reference: <https://www.postman.com/batteryincluded/core/overview>
 | `locale`            | Locale code used to query localized attributes (e.g. `de`, `de-DE`). Must match a locale configured in your BatteryIncluded project. | **Yes**  | —                                |
 | `filterFacets`      | List of allowed filter definitions. Each entry must contain a `fieldName`, optionally a `label`. When the array is empty(`[]`), all available facets from BatteryIncluded will be exposed.                                    | No       | `[]`                             |
 | `catalogService`      | Defines which catalog backend is used.                                    | **Yes**       | `CATALOG_SERVICE_PRODUCTS`                             |
+| `categoryListingEnabled` | Category product listings, their filters and counts come from BatteryIncluded. See "Category listings" below. | No | `false` |
+| `categoryFilterField` | How category listings are filtered in BatteryIncluded: `name` (category path, merchandising rules apply) or `id` (category id, no merchandising rules). | No | `name` |
 
 
 
@@ -55,16 +57,42 @@ The extension can resolve product data through different catalog services:
 * `CATALOG_SERVICE_PRODUCTS` – Shopgate Products Service
 * `CATALOG_SERVICE_GENERIC` – Shopgate Catalog Service
 
+### 🗂️ Category listings
+
+With `categoryListingEnabled`, a `before` hook on `shopgate.catalog.getProducts.v1` and the first step of `shopgate.catalog.getFilters.v1` turn a category request into a BatteryIncluded search for `*` with a category filter. Product order, total count, filters and paging then come from BatteryIncluded. Products are still loaded from the configured catalog service. This works for every catalog backend. Page widgets that list a category behave the same way.
+
+The Shopgate category id must equal the category id in BatteryIncluded (`_product_i18n.categoryTree.id`).
+
+`categoryFilterField`:
+
+* `name` filters by `_product_i18n.categoryTree.name`. The extension looks up the category path once per category (cached for one hour, unknown categories for five minutes). BatteryIncluded merchandising rules (pinned, boosted, hidden products) only apply with this filter.
+* `id` filters by `_product_i18n.categoryTree.id` without a lookup. Merchandising rules do not apply.
+
+Fallback and errors:
+
+* `name`: categories unknown to BatteryIncluded and failed lookups on the first page without BatteryIncluded filters show the regular Shopgate listing. With active BatteryIncluded filters, unknown categories and failed lookups fail the request like search does. Failed lookups on later pages and any later BatteryIncluded error fail as well.
+* Requests with filters that do not come from BatteryIncluded (Shopgate filters) always use the Shopgate listing.
+* If the first page fell back to the Shopgate listing and a later page reaches BatteryIncluded, the two orders mix within one listing. The PWA drops duplicate products.
+* `id`: no fallback. Categories unknown to BatteryIncluded list no products.
+
+Limitations:
+
+* Category requests run through the search pipelines. Hooks bound to `getProductsByCategory.v1` or `getProductsByFilter.v1` do not run for them, hooks bound to the search pipelines and `getProductsByIds.v1` do.
+* `locationCodes`, `properties` and `additionalWebhookData` are not forwarded to the product request.
+* Variant hits are mapped to their parent product (search included).
+
 ### Add a configuration object similar to the following:
 
 ```json
 {
   "baseUrl": "https://api.batteryincluded.io",
-  "collection": "customer.demo",
-  "publicApiKey": "DeMoKeyK1tsfkpse9u9834hfhdhfKF7s",
+  "collection": "customer.your-collection",
+  "publicApiKey": "<public API key>",
   "productIdentifier": "_product.id",
   "locale": "de-DE",
   "catalogService": "CATALOG_SERVICE_PRODUCTS",
+  "categoryListingEnabled": false,
+  "categoryFilterField": "name",
   "filterFacets": [
     {
       "fieldName": "_product_i18n.attributes.Hersteller",
